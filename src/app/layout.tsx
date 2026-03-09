@@ -4,6 +4,9 @@ import './globals.css'
 export const metadata: Metadata = {
   title: 'Matheus Vinicius — Creative Developer',
   description: 'Creative Developer crafting digital experiences at the intersection of design, motion and code.',
+  icons: {
+    icon: '/logo.svg',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
