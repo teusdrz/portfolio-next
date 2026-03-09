@@ -1,0 +1,55 @@
+[data-philosophy] {
+  position: relative;
+  padding: var(--space-48) var(--space-8);
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg);
+  transition: background-color 0.8s ease;
+  border-top: 1px solid var(--color-border-subtle);
+  overflow: hidden;
+}
+
+[data-philosophy].is-active {
+  background-color: var(--color-surface-1);
+}
+
+[data-philosophy-inner] {
+  max-width: 1200px;
+  position: relative;
+  z-index: 1;
+}
+
+[data-philosophy-flash] {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-text-primary);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+[data-philosophy-text] {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+[data-pw] {
+  display: inline-block;
+  margin-right: 0.22em;
+  will-change: transform, opacity;
+  transition: color 0.4s ease;
+}
+
+[data-pw].is-lit {
+  color: var(--color-accent-bright);
+}
+
+@media (max-width: 640px) {
+  [data-philosophy] {
+    padding: var(--space-32) var(--space-4);
+  }
+}

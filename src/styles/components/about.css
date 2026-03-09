@@ -1,0 +1,29 @@
+[data-about] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: var(--color-bg);
+    padding: var(--space-16) var(--space-8);
+}
+
+[data-about-content] {
+    max-width: 1100px;
+    text-align: center;
+}
+
+[data-about-text] {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+}
+
+[data-about-text] .char {
+    display: inline-block;
+    transition: none;
+}
