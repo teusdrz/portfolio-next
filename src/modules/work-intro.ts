@@ -14,7 +14,7 @@ export function initWorkIntro() {
     lines.forEach((line) => {
         const split = new SplitText(line, { type: 'words', wordsClass: 'work-intro-word' })
         splits.push(split)
-        allWords.push(...split.words)
+        allWords.push(...(split.words as HTMLElement[]))
     })
 
     allWords.forEach((word) => {
