@@ -98,6 +98,27 @@
   transition: opacity 0.2s;
 }
 
+@media (max-width: 430px) {
+  [data-nav] {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  [data-nav-logo] svg {
+    width: 32px;
+    height: 26px;
+  }
+
+  [data-nav-links] {
+    gap: var(--space-4);
+    margin-left: 0;
+  }
+
+  [data-nav-link] {
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+  }
+}
+
 [data-nav-status] {
   display: flex;
   align-items: center;

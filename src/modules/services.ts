@@ -4,6 +4,9 @@ export function initServices() {
   const section = document.querySelector<HTMLElement>('[data-services]')
   if (!section) return { destroy: () => { } }
 
+  /* Skip card expand/collapse on mobile */
+  if (window.innerWidth <= 430) return { destroy: () => { } }
+
   const label = section.querySelector<HTMLElement>('[data-services-label]')
   const heading = section.querySelector<HTMLElement>('[data-services-heading]')
   const cardsWrap = section.querySelector<HTMLElement>('[data-services-cards]')
