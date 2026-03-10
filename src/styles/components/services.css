@@ -162,7 +162,8 @@
 @media (max-width: 430px) {
   [data-services] {
     height: auto;
-    min-height: 100vh;
+    min-height: auto;
+    overflow: visible;
   }
 
   [data-services-header] {
@@ -178,14 +179,15 @@
   [data-services-cards] {
     flex-direction: column;
     min-height: auto;
-    flex: 1;
+    flex: 0 0 auto;
   }
 
   [data-service-card] {
     flex-basis: auto !important;
     flex-grow: 0 !important;
     flex-shrink: 0 !important;
-    padding: var(--space-4) var(--space-5);
+    padding: var(--space-5);
+    min-height: 0;
   }
 
   [data-service-card]+[data-service-card] {
@@ -193,31 +195,30 @@
     border-top: 1px solid rgba(0, 0, 0, 0.12);
   }
 
+  /* Hide vertical titles — inline styles override normal CSS, so use !important */
   [data-service-title-v] {
-    position: static;
-    transform: none;
-    writing-mode: horizontal-tb;
-    white-space: normal;
-    opacity: 1 !important;
+    display: none !important;
   }
 
+  /* Always show horizontal titles on mobile */
   [data-service-title-h] {
+    display: block !important;
     opacity: 1 !important;
-    display: none;
+    transform: none !important;
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+    margin-top: var(--space-2);
   }
 
   [data-service-content] {
-    opacity: 1 !important;
-    transform: none !important;
+    overflow: hidden;
   }
 
   [data-service-num] {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
-  [data-service-title-h],
-  [data-service-title-v] {
-    font-size: 1.25rem;
+  [data-service-list] {
+    margin-top: var(--space-3);
   }
 
   [data-service-list] li {
@@ -226,6 +227,6 @@
 
   [data-service-desc] {
     font-size: 0.8rem;
-    display: none;
+    margin-top: var(--space-3);
   }
 }

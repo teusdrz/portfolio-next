@@ -4,9 +4,6 @@ export function initServices() {
   const section = document.querySelector<HTMLElement>('[data-services]')
   if (!section) return { destroy: () => { } }
 
-  /* Skip card expand/collapse on mobile */
-  if (window.innerWidth <= 430) return { destroy: () => { } }
-
   const label = section.querySelector<HTMLElement>('[data-services-label]')
   const heading = section.querySelector<HTMLElement>('[data-services-heading]')
   const cardsWrap = section.querySelector<HTMLElement>('[data-services-cards]')
@@ -14,6 +11,65 @@ export function initServices() {
 
   if (!label || !heading || !cardsWrap || !cards.length) return { destroy: () => { } }
 
+  /* ── Mobile accordion ── */
+  if (window.innerWidth <= 430) {
+    let activeIndex = 0
+    let isAnimating = false
+
+    cards.forEach((c, i) => {
+      const titleH = c.querySelector<HTMLElement>('[data-service-title-h]')
+      const titleV = c.querySelector<HTMLElement>('[data-service-title-v]')
+      const content = c.querySelector<HTMLElement>('[data-service-content]')
+
+      if (titleH) gsap.set(titleH, { opacity: 1, y: 0 })
+      if (titleV) gsap.set(titleV, { display: 'none' })
+
+      if (i === 0) {
+        if (content) gsap.set(content, { height: 'auto', opacity: 1, overflow: 'visible' })
+      } else {
+        if (content) gsap.set(content, { height: 0, opacity: 0, overflow: 'hidden' })
+      }
+    })
+
+    gsap.set(label, { yPercent: 0, opacity: 1 })
+    gsap.set(heading, { yPercent: 0, opacity: 1 })
+    gsap.set(cardsWrap, { yPercent: 0, opacity: 1 })
+
+    function switchCardMobile(newIdx: number) {
+      if (newIdx === activeIndex || isAnimating) return
+      isAnimating = true
+
+      const oldContent = cards[activeIndex].querySelector('[data-service-content]')
+      const newContent = cards[newIdx].querySelector('[data-service-content]')
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          activeIndex = newIdx
+          isAnimating = false
+        }
+      })
+
+      tl.to(oldContent, { opacity: 0, height: 0, overflow: 'hidden', duration: 0.35, ease: 'power2.inOut' })
+      tl.to(newContent, { height: 'auto', overflow: 'visible', duration: 0.35, ease: 'power2.inOut' }, 0.15)
+      tl.to(newContent, { opacity: 1, duration: 0.25, ease: 'power2.out' }, 0.25)
+    }
+
+    function handleClickMobile(e: Event) {
+      const target = e.currentTarget as HTMLElement
+      const idx = Number(target.dataset.cardIndex)
+      switchCardMobile(idx)
+    }
+
+    cards.forEach(c => c.addEventListener('click', handleClickMobile))
+
+    return {
+      destroy: () => {
+        cards.forEach(c => c.removeEventListener('click', handleClickMobile))
+      }
+    }
+  }
+
+  /* ── Desktop ── */
   let activeIndex = 0
   let isAnimating = false
 
