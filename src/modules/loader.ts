@@ -1,140 +1,39 @@
 import { gsap } from '@/lib/gsap-setup'
 import * as THREE from 'three'
 
-type ParticleSystem = {
-  scene: THREE.Scene
-  camera: THREE.PerspectiveCamera
-  renderer: THREE.WebGLRenderer
-  particles: THREE.Points
-  geometry: THREE.BufferGeometry
-  material: THREE.ShaderMaterial
-  animationId: number
-  clock: THREE.Clock
-  raf: { id: number }
-}
+function buildTextTexture(): THREE.CanvasTexture {
+  const canvas = document.createElement('canvas')
+  canvas.width = 1024
+  canvas.height = 256
 
-function buildParticleSystem(canvas: HTMLCanvasElement): ParticleSystem {
-  const W = window.innerWidth
-  const H = window.innerHeight
+  const ctx = canvas.getContext('2d')!
 
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-  renderer.setSize(W, H)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 100)
-  camera.position.z = 4
+  const fontSize = 52
+  ctx.font = `600 ${fontSize}px 'Bricolage Grotesque', system-ui, sans-serif`
+  ctx.fillStyle = '#111111'
+  ctx.textBaseline = 'middle'
+  ctx.textAlign = 'center'
 
-  const COUNT = 1200
-  const positions = new Float32Array(COUNT * 3)
-  const randoms = new Float32Array(COUNT)
-  const sizes = new Float32Array(COUNT)
+  const label = 'MATHEUS VINICIUS'
+  const repeatCount = 3
+  const segmentWidth = canvas.width / repeatCount
 
-  for (let i = 0; i < COUNT; i++) {
-    const theta = Math.random() * Math.PI * 2
-    const phi = Math.acos(2 * Math.random() - 1)
-    const r = 2.5 + Math.random() * 2.5
-
-    positions[i * 3 + 0] = r * Math.sin(phi) * Math.cos(theta)
-    positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta)
-    positions[i * 3 + 2] = r * Math.cos(phi) - 1.5
-
-    randoms[i] = Math.random()
-    sizes[i] = 0.5 + Math.random() * 1.5
+  for (let i = 0; i < repeatCount; i++) {
+    const x = segmentWidth * i + segmentWidth / 2
+    const y = canvas.height / 2
+    ctx.fillText(label, x, y, segmentWidth - 32)
   }
 
-  const geometry = new THREE.BufferGeometry()
-  geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3))
-  geometry.setAttribute('aRandom', new THREE.BufferAttribute(randoms, 1))
-  geometry.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1))
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.wrapS = THREE.RepeatWrapping
+  texture.wrapT = THREE.ClampToEdgeWrapping
+  texture.repeat.set(1, 1)
+  texture.needsUpdate = true
 
-  const material = new THREE.ShaderMaterial({
-    transparent: true,
-    depthWrite: false,
-    blending: THREE.AdditiveBlending,
-    uniforms: {
-      uTime: { value: 0 },
-      uProgress: { value: 0 },
-      uPixelRatio: { value: renderer.getPixelRatio() },
-    },
-    vertexShader: `
-      uniform float uTime;
-      uniform float uProgress;
-      uniform float uPixelRatio;
-      attribute float aRandom;
-      attribute float aSize;
-      varying float vAlpha;
-      varying float vRandom;
-
-      void main() {
-        vRandom = aRandom;
-
-        vec3 pos = position;
-        float drift = sin(uTime * 0.4 + aRandom * 6.2831) * 0.06;
-        pos.y += drift;
-        pos.x += cos(uTime * 0.3 + aRandom * 6.2831) * 0.04;
-
-        vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
-        gl_Position = projectionMatrix * mvPosition;
-
-        float dist = length(pos.xy) / 5.0;
-        vAlpha = smoothstep(1.0, 0.0, dist) * uProgress;
-
-        gl_PointSize = aSize * uPixelRatio * (3.5 / -mvPosition.z);
-      }
-    `,
-    fragmentShader: `
-      varying float vAlpha;
-      varying float vRandom;
-
-      void main() {
-        vec2 uv = gl_PointCoord - 0.5;
-        float d = length(uv);
-        float circle = 1.0 - smoothstep(0.35, 0.5, d);
-
-        float greenTint = 0.55 + vRandom * 0.45;
-        vec3 col = mix(
-          vec3(0.85, 0.9, 0.88),
-          vec3(0.4, greenTint, 0.35),
-          vRandom * 0.6
-        );
-
-        gl_FragColor = vec4(col, circle * vAlpha * 0.55);
-      }
-    `,
-  })
-
-  const particles = new THREE.Points(geometry, material)
-  scene.add(particles)
-
-  const clock = new THREE.Clock()
-  const raf = { id: 0 }
-
-  const tick = () => {
-    raf.id = requestAnimationFrame(tick)
-    const elapsed = clock.getElapsedTime()
-    material.uniforms.uTime.value = elapsed
-    particles.rotation.y = elapsed * 0.04
-    particles.rotation.x = Math.sin(elapsed * 0.025) * 0.15
-    renderer.render(scene, camera)
-  }
-
-  tick()
-
-  return { scene, camera, renderer, particles, geometry, material, animationId: raf.id, clock, raf }
+  return texture
 }
-
-function getPathLength(path: SVGPathElement): number {
-  return path.getTotalLength()
-}
-
-const STATUS_LABELS = [
-  'initializing',
-  'loading assets',
-  'building scene',
-  'almost ready',
-  'launching',
-]
 
 export function initLoader(): Promise<void> {
   return new Promise((resolve) => {
@@ -146,52 +45,147 @@ export function initLoader(): Promise<void> {
 
     const panelTop = overlay.querySelector<HTMLElement>('[data-loader-panel="top"]')
     const panelBottom = overlay.querySelector<HTMLElement>('[data-loader-panel="bottom"]')
-    const canvas = overlay.querySelector<HTMLCanvasElement>('[data-loader-canvas]')
-    const logoEl = overlay.querySelector<HTMLElement>('[data-loader-logo]')
-    const counterEl = overlay.querySelector<HTMLElement>('[data-loader-counter]')
-    const counterWrap = overlay.querySelector<HTMLElement>('[data-loader-counter-wrap]')
-    const barEl = overlay.querySelector<HTMLElement>('[data-loader-bar]')
-    const barGlow = overlay.querySelector<HTMLElement>('[data-loader-bar-glow]')
+    const canvasEl = overlay.querySelector<HTMLCanvasElement>('[data-loader-canvas]')
     const barTrack = overlay.querySelector<HTMLElement>('[data-loader-bar-track]')
-    const statusWrap = overlay.querySelector<HTMLElement>('[data-loader-status]')
-    const statusText = overlay.querySelector<HTMLElement>('[data-loader-status-text]')
-    const cornerTL = overlay.querySelector<HTMLElement>('[data-loader-corner="tl"]')
-    const cornerBR = overlay.querySelector<HTMLElement>('[data-loader-corner="br"]')
+    const barEl = overlay.querySelector<HTMLElement>('[data-loader-bar]')
+    const labelEl = overlay.querySelector<HTMLElement>('[data-loader-label]')
 
-    const pathM = overlay.querySelector<SVGPathElement>('[data-logo-path="m"]')
-    const pathV = overlay.querySelector<SVGPathElement>('[data-logo-path="v"]')
-
-    let ps: ParticleSystem | null = null
-    const particleProgressProxy = { value: 0 }
-
-    if (canvas) {
-      ps = buildParticleSystem(canvas)
+    if (!canvasEl) {
+      resolve()
+      return
     }
 
-    if (pathM && pathV) {
-      const lenM = getPathLength(pathM)
-      const lenV = getPathLength(pathV)
-      pathM.style.setProperty('--path-length', String(lenM))
-      pathM.style.strokeDasharray = String(lenM)
-      pathM.style.strokeDashoffset = String(lenM)
-      pathV.style.setProperty('--path-length', String(lenV))
-      pathV.style.strokeDasharray = String(lenV)
-      pathV.style.strokeDashoffset = String(lenV)
+    const scene = new THREE.Scene()
+    scene.background = new THREE.Color(0xffffff)
+
+    const camera = new THREE.PerspectiveCamera(
+      45,
+      canvasEl.clientWidth / canvasEl.clientHeight,
+      0.1,
+      100
+    )
+    camera.position.set(0, 0, 5)
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas: canvasEl,
+      antialias: true,
+      alpha: true,
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(canvasEl.clientWidth, canvasEl.clientHeight)
+
+    const geometry = new THREE.CylinderGeometry(0.7, 0.7, 1.3, 64, 1, true)
+
+    const textTexture = buildTextTexture()
+
+    const material = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      roughness: 0.1,
+      metalness: 0,
+      transmission: 0.6,
+      transparent: true,
+      side: THREE.DoubleSide,
+      map: textTexture,
+    })
+
+    const cylinder = new THREE.Mesh(geometry, material)
+    scene.add(cylinder)
+
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+    scene.add(ambientLight)
+
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2)
+    dirLight.position.set(5, 5, 5)
+    scene.add(dirLight)
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.4)
+    rimLight.position.set(-4, 2, -3)
+    scene.add(rimLight)
+
+    let isDragging = false
+    let prevX = 0
+    let prevY = 0
+    let velX = 0
+    let velY = 0
+    let rafId = 0
+    const isMobile = window.matchMedia('(pointer: coarse)').matches
+
+    function onPointerDown(e: PointerEvent): void {
+      if (isMobile) return
+      isDragging = true
+      prevX = e.clientX
+      prevY = e.clientY
+      velX = 0
+      velY = 0
+      canvasEl!.setPointerCapture(e.pointerId)
     }
 
-    const counterObj = { val: 0 }
-    let statusIndex = 0
+    function onPointerMove(e: PointerEvent): void {
+      if (!isDragging) return
+      const dx = e.clientX - prevX
+      const dy = e.clientY - prevY
+      velX = dx
+      velY = dy
+      cylinder.rotation.y += dx * 0.01
+      cylinder.rotation.x += dy * 0.01
+      prevX = e.clientX
+      prevY = e.clientY
+    }
+
+    function onPointerUp(): void {
+      isDragging = false
+    }
+
+    if (!isMobile) {
+      canvasEl.addEventListener('pointerdown', onPointerDown)
+      canvasEl.addEventListener('pointermove', onPointerMove)
+      canvasEl.addEventListener('pointerup', onPointerUp)
+      canvasEl.addEventListener('pointercancel', onPointerUp)
+    }
+
+    function animate(): void {
+      rafId = requestAnimationFrame(animate)
+      if (!isDragging) {
+        // auto-rotate + momentum decay
+        velX *= 0.92
+        velY *= 0.92
+        cylinder.rotation.y += 0.008 + velX * 0.003
+        cylinder.rotation.x += velY * 0.003
+      }
+      renderer.render(scene, camera)
+    }
+
+    animate()
+
+    function onResize(): void {
+      if (!canvasEl) return
+      const w = canvasEl.clientWidth
+      const h = canvasEl.clientHeight
+      camera.aspect = w / h
+      camera.updateProjectionMatrix()
+      renderer.setSize(w, h)
+    }
+
+    window.addEventListener('resize', onResize)
+
+    function cleanup(): void {
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('resize', onResize)
+      if (!isMobile) {
+        canvasEl!.removeEventListener('pointerdown', onPointerDown)
+        canvasEl!.removeEventListener('pointermove', onPointerMove)
+        canvasEl!.removeEventListener('pointerup', onPointerUp)
+        canvasEl!.removeEventListener('pointercancel', onPointerUp)
+      }
+      geometry.dispose()
+      material.dispose()
+      textTexture.dispose()
+      renderer.dispose()
+    }
 
     const tl = gsap.timeline({
       onComplete: () => {
-        if (ps) {
-          cancelAnimationFrame(ps.raf.id)
-          ps.geometry.dispose()
-          ps.material.dispose()
-          ps.renderer.dispose()
-          ps.renderer.forceContextLoss()
-          ps = null
-        }
+        cleanup()
         gsap.set(overlay, { display: 'none' })
         resolve()
       },
@@ -200,141 +194,48 @@ export function initLoader(): Promise<void> {
     tl
       .set(overlay, { autoAlpha: 1 })
 
-      .to(canvas, { opacity: 1, duration: 1.2, ease: 'power2.out' }, 0)
-      .to(particleProgressProxy, {
-        value: 1,
-        duration: 1.4,
-        ease: 'power2.out',
-        onUpdate() {
-          if (ps) ps.material.uniforms.uProgress.value = particleProgressProxy.value
-        },
-      }, 0.1)
+      .fromTo(
+        canvasEl,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+        0
+      )
 
-      .to([cornerTL, cornerBR], {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        ease: 'power3.out',
-        stagger: 0.12,
-      }, 0.2)
+      .to(
+        labelEl,
+        { opacity: 1, duration: 0.4, ease: 'power2.out' },
+        0.4
+      )
 
-      .to(logoEl, {
-        opacity: 1,
-        y: 0,
-        duration: 0.9,
-        ease: 'power3.out',
-      }, 0.35)
+      .to(
+        barTrack,
+        { opacity: 1, duration: 0.4, ease: 'power2.out' },
+        0.5
+      )
 
-      .to(pathM, {
-        strokeDashoffset: 0,
-        duration: 0.75,
-        ease: 'power2.inOut',
-      }, 0.45)
+      .fromTo(
+        barEl,
+        { scaleX: 0 },
+        { scaleX: 1, duration: 5.8, ease: 'none' },
+        0.8
+      )
 
-      .to(pathV, {
-        strokeDashoffset: 0,
-        duration: 0.55,
-        ease: 'power2.inOut',
-      }, 0.9)
+      .to(
+        [canvasEl, barTrack, labelEl],
+        { opacity: 0, duration: 0.3, ease: 'power2.in' },
+        6.6
+      )
 
-      .to(barTrack, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'power2.out',
-      }, 0.8)
+      .to(
+        panelTop,
+        { yPercent: -100, duration: 0.9, ease: 'expo.inOut' },
+        6.9
+      )
 
-      .to(counterWrap, {
-        opacity: 1,
-        duration: 0.5,
-        ease: 'power2.out',
-      }, 0.85)
-
-      .to(statusWrap, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: 'power2.out',
-      }, 0.95)
-
-      .to(counterObj, {
-        val: 100,
-        duration: 1.6,
-        ease: 'power2.inOut',
-        onUpdate() {
-          const v = Math.round(counterObj.val)
-          if (counterEl) {
-            counterEl.textContent = String(v).padStart(2, '0')
-          }
-
-          if (barEl) {
-            gsap.set(barEl, { scaleX: v / 100 })
-          }
-
-          if (barGlow) {
-            gsap.set(barGlow, {
-              opacity: v > 2 && v < 98 ? 0.9 : 0,
-              right: `${100 - v}%`,
-            })
-          }
-
-          const newIndex = Math.floor((v / 100) * (STATUS_LABELS.length - 1))
-          if (newIndex !== statusIndex && statusText) {
-            statusIndex = newIndex
-            gsap.fromTo(
-              statusText,
-              { opacity: 0, y: 4 },
-              { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out', overwrite: true }
-            )
-            statusText.textContent = STATUS_LABELS[statusIndex]
-          }
-        },
-      }, 1.0)
-
-      .to(logoEl, {
-        scale: 1.08,
-        duration: 0.35,
-        ease: 'power2.out',
-        yoyo: true,
-        repeat: 1,
-      }, 2.7)
-
-      .to([statusWrap, barTrack, counterWrap], {
-        opacity: 0,
-        y: -10,
-        duration: 0.35,
-        ease: 'power3.in',
-        stagger: 0.05,
-      }, 2.85)
-
-      .to(logoEl, {
-        opacity: 0,
-        scale: 0.9,
-        duration: 0.4,
-        ease: 'power3.in',
-      }, 3.0)
-
-      .to([cornerTL, cornerBR], {
-        opacity: 0,
-        duration: 0.3,
-        ease: 'power2.in',
-      }, 3.0)
-
-      .to(canvas, {
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-      }, 3.1)
-
-      .to(panelTop, {
-        yPercent: -100,
-        duration: 1.0,
-        ease: 'expo.inOut',
-      }, 3.25)
-
-      .to(panelBottom, {
-        yPercent: 100,
-        duration: 1.0,
-        ease: 'expo.inOut',
-      }, 3.25)
+      .to(
+        panelBottom,
+        { yPercent: 100, duration: 0.9, ease: 'expo.inOut' },
+        6.9
+      )
   })
 }

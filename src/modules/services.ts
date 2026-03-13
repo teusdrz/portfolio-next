@@ -80,7 +80,7 @@ export function initServices() {
 
     if (titleV) {
       gsap.set(titleV, { clearProps: 'transform' })
-      gsap.set(titleV, { xPercent: -50, yPercent: -50, rotation: 180 })
+      gsap.set(titleV, { rotation: 180 })
     }
 
     if (i === 0) {
@@ -97,14 +97,14 @@ export function initServices() {
   })
 
   gsap.set(label, { yPercent: 120 })
-  gsap.set(heading, { yPercent: 150 })
+  gsap.set(heading, { yPercent: 500 })
   gsap.set(cardsWrap, { yPercent: 100 })
 
   const scrollTl = gsap.timeline({
     scrollTrigger: {
       trigger: section,
       start: 'top top',
-      end: '+=80%',
+      end: '+=150%',
       pin: true,
       scrub: 0.4,
     }
@@ -112,8 +112,8 @@ export function initServices() {
 
   scrollTl
     .to(label, { yPercent: 0, duration: 0.3, ease: 'none' })
-    .to(heading, { yPercent: 0, duration: 0.4, ease: 'none' }, 0.05)
-    .to(cardsWrap, { yPercent: 0, duration: 0.5, ease: 'none' }, 0.3)
+    .to(heading, { yPercent: 0, duration: 0.4, ease: 'none' }, 0.4)
+    .to(cardsWrap, { yPercent: 0, duration: 0.5, ease: 'none' }, 0.7)
 
   function switchCard(newIdx: number) {
     if (newIdx === activeIndex || isAnimating) return

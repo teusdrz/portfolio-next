@@ -2,9 +2,10 @@
   position: fixed;
   inset: 0;
   z-index: var(--z-loader);
-  background-color: var(--color-bg);
+  background-color: #ffffff;
   overflow: hidden;
   pointer-events: all;
+  opacity: 0;
 }
 
 [data-loader-panel] {
@@ -12,167 +13,71 @@
   left: 0;
   width: 100%;
   height: 50%;
-  background-color: var(--color-bg);
+  background-color: #ffffff;
   z-index: 2;
   will-change: transform;
 }
 
 [data-loader-panel="top"] {
   top: 0;
-  transform: translateY(0%);
 }
 
 [data-loader-panel="bottom"] {
   bottom: 0;
-  transform: translateY(0%);
 }
 
 [data-loader-canvas] {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 3;
   opacity: 0;
+  cursor: grab;
 }
 
-[data-loader-center] {
+[data-loader-canvas]:active {
+  cursor: grabbing;
+}
+
+[data-loader-ui] {
   position: absolute;
-  inset: 0;
-  z-index: 3;
+  bottom: clamp(3rem, 8vh, 6rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-8);
-}
-
-[data-loader-logo] {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-[data-loader-logo] svg {
-  color: var(--color-text-primary);
-  display: block;
-  filter: drop-shadow(0 0 20px var(--color-accent-glow));
-}
-
-[data-loader-logo] path {
-  stroke-dasharray: var(--path-length, 200);
-  stroke-dashoffset: var(--path-length, 200);
-}
-
-[data-loader-counter-wrap] {
-  display: flex;
-  align-items: baseline;
-  gap: 0.15em;
-  opacity: 0;
-}
-
-[data-loader-counter] {
-  font-family: var(--font-mono);
-  font-size: clamp(4.5rem, 12vw, 10rem);
-  font-weight: 400;
-  letter-spacing: -0.06em;
-  color: var(--color-text-primary);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  display: block;
-}
-
-[data-loader-percent] {
-  font-family: var(--font-mono);
-  font-size: clamp(1.2rem, 3vw, 2.4rem);
-  font-weight: 400;
-  color: var(--color-text-secondary);
-  letter-spacing: -0.02em;
-  line-height: 1;
-  align-self: flex-end;
-  padding-bottom: 0.3em;
+  gap: 0.75rem;
+  width: clamp(200px, 40vw, 400px);
 }
 
 [data-loader-bar-track] {
-  position: relative;
-  width: clamp(160px, 30vw, 320px);
+  width: 100%;
   height: 1px;
-  background-color: var(--color-border);
+  background-color: #e0e0e0;
   opacity: 0;
+  position: relative;
 }
 
 [data-loader-bar] {
   position: absolute;
   inset: 0;
-  background: var(--gradient-accent-line);
+  background-color: #111111;
   transform-origin: left center;
   transform: scaleX(0);
   will-change: transform;
 }
 
-[data-loader-bar-glow] {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg in oklch, transparent, var(--color-accent-bright));
-  transform: translateY(-50%);
-  opacity: 0;
-  filter: blur(4px);
-  pointer-events: none;
-}
-
-[data-loader-status] {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  opacity: 0;
-  transform: translateY(4px);
-}
-
-[data-loader-status-dot] {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background-color: var(--color-accent);
-  flex-shrink: 0;
-  box-shadow: 0 0 8px var(--color-accent);
-}
-
-[data-loader-status-text] {
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-text-tertiary);
-}
-
-[data-loader-corner] {
-  position: absolute;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  font-family: var(--font-mono);
+[data-loader-label] {
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.6rem;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--color-text-tertiary);
+  color: #999999;
+  margin: 0;
   opacity: 0;
-}
-
-[data-loader-corner="tl"] {
-  top: var(--space-8);
-  left: var(--space-8);
-}
-
-[data-loader-corner="br"] {
-  bottom: var(--space-8);
-  right: var(--space-8);
-  text-align: right;
 }
 
 [data-scroll-progress] {

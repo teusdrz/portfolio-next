@@ -11,7 +11,7 @@
 [data-panel-col] {
     flex: 1;
     height: 100%;
-    background: var(--color-text-primary);
+    background: #f7f7f7;
     transform: scaleY(0);
     transform-origin: center center;
     will-change: transform;

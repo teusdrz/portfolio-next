@@ -1,29 +1,270 @@
+/* ═══════════════════════════════════════════════
+   About — Olha-Lazarieva-inspired layout
+   ═══════════════════════════════════════════════ */
+
 [data-about] {
-    position: relative;
-    display: flex;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  padding: 0 clamp(var(--space-6), 5vw, var(--space-16));
+  overflow: hidden;
+}
+
+/* ── Intro ── */
+[data-about-intro] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-24) 0 var(--space-16);
+}
+
+[data-about-photo] {
+  width: clamp(180px, 22vw, 280px);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  margin-bottom: var(--space-8);
+}
+
+[data-about-photo-img] {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+[data-about-photo-placeholder] {
+  width: 100%;
+  height: 100%;
+  background: var(--color-surface-2);
+}
+
+[data-about-greeting] {
+  font-family: var(--font-mono);
+  font-size: clamp(0.875rem, 1.2vw, 1.1rem);
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-1);
+}
+
+[data-about-name] {
+  font-family: var(--font-mono);
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-10);
+}
+
+[data-about-label] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-8);
+  cursor: default;
+}
+
+[data-about-arrow] {
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+  transform: rotate(45deg);
+}
+
+[data-about-description] {
+  font-family: var(--font-mono);
+  font-size: clamp(0.75rem, 1vw, 0.95rem);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  max-width: 520px;
+  text-align: center;
+}
+
+/* ── Divider ── */
+[data-about-divider] {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0;
+}
+
+/* ── Big headline ── */
+[data-about-headline] {
+  padding: var(--space-16) 0 var(--space-12);
+  text-align: left;
+}
+
+[data-about-headline-text] {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 7vw, 7rem);
+  font-weight: 200;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: oklch(85% 0.01 265 / 0.8);
+}
+
+[data-about-dash] {
+  color: oklch(70% 0.005 265 / 0.45);
+  font-weight: 300;
+}
+
+/* ── Philosophy ── */
+[data-about-philosophy] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-10);
+  padding: var(--space-8) 0 var(--space-24);
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+[data-about-philosophy]>[data-about-body]:last-child {
+  align-self: flex-end;
+  text-align: right;
+  margin-right: 0;
+  margin-left: auto;
+  transform: translateX(clamp(140px, 22vw, 300px)) translateY(var(--space-10));
+}
+
+[data-about-body] {
+  font-family: var(--font-mono);
+  font-size: clamp(0.7rem, 0.95vw, 0.9rem);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  line-height: 1.9;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  max-width: 480px;
+}
+
+/* ── Lifestyle ── */
+[data-about-lifestyle] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  padding: var(--space-16) 0 var(--space-12);
+}
+
+[data-about-lifestyle-photos] {
+  display: flex;
+  gap: var(--space-6);
+  align-items: center;
+  justify-content: center;
+}
+
+[data-about-lifestyle-photo] {
+  width: clamp(140px, 16vw, 220px);
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+[data-about-lifestyle-photo] img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+[data-about-lifestyle-right] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: center;
+  gap: var(--space-8);
+}
+
+/* ── CTA ── */
+[data-about-cta] {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-12) 0 var(--space-24);
+}
+
+[data-about-cta-link] {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-text-primary);
+  padding-bottom: var(--space-2);
+}
+
+[data-about-cta-arrow] {
+  flex-shrink: 0;
+}
+
+/* ── Shared word animation ── */
+[data-aw] {
+  display: inline-block;
+  will-change: opacity, transform;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  [data-about-lifestyle] {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+  }
+
+  [data-about-lifestyle-right] {
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background: var(--color-bg);
-    padding: var(--space-16) var(--space-8);
+  }
+
+  [data-about-headline-text] {
+    font-size: clamp(2rem, 8vw, 4rem);
+  }
 }
 
-[data-about-content] {
-    max-width: 1100px;
-    text-align: center;
-}
+@media (max-width: 430px) {
+  [data-about] {
+    padding: 0 var(--space-5);
+  }
 
-[data-about-text] {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.8rem, 3.8vw, 3.2rem);
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: -0.02em;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-}
+  [data-about-intro] {
+    padding: var(--space-16) 0 var(--space-10);
+  }
 
-[data-about-text] .char {
-    display: inline-block;
-    transition: none;
+  [data-about-photo] {
+    width: 160px;
+  }
+
+  [data-about-headline] {
+    padding: var(--space-10) 0 var(--space-8);
+  }
+
+  [data-about-headline-text] {
+    font-size: clamp(1.6rem, 9vw, 2.5rem);
+  }
+
+  [data-about-lifestyle-photos] {
+    flex-direction: column;
+  }
+
+  [data-about-lifestyle-photo] {
+    width: 160px;
+  }
+
+  [data-about-cta] {
+    padding: var(--space-8) 0 var(--space-16);
+  }
 }

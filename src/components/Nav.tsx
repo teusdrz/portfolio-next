@@ -8,12 +8,10 @@ export default function Nav() {
         </svg>
       </a>
       <ul data-nav-links role="list">
-        <li><a href="#work" data-nav-link data-magnetic>Work</a></li>
-        <li><a href="#about" data-nav-link data-magnetic>About</a></li>
-        <li><a href="#contact" data-nav-link data-magnetic>Contact</a></li>
+        <li><a href="#work" data-nav-link data-magnetic><span data-text="Work">Work</span></a></li>
+        <li><a href="#about" data-nav-link data-magnetic><span data-text="About">About</span></a></li>
+        <li><a href="#contact" data-nav-link data-magnetic><span data-text="Contact">Contact</span></a></li>
       </ul>
-      <div data-nav-right>
-      </div>
     </nav>
   )
 }

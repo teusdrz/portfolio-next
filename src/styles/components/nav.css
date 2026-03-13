@@ -11,18 +11,7 @@
 }
 
 [data-nav]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: transparent;
-  backdrop-filter: blur(0px);
-  transition: background-color 0.5s ease, backdrop-filter 0.5s ease;
-  pointer-events: none;
-}
-
-[data-nav].is-scrolled::before {
-  background-color: var(--color-bg-075);
-  backdrop-filter: blur(24px);
+  display: none;
 }
 
 [data-nav-logo] {
@@ -42,7 +31,7 @@
   gap: var(--space-8);
   position: relative;
   z-index: 1;
-  margin-left: calc(-1 * var(--space-12));
+  margin-left: 0;
 }
 
 [data-nav-link] {
@@ -50,29 +39,31 @@
   font-size: 0.6875rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-text-secondary);
-  transition: color 0.2s ease;
+  color: #3a3a42;
   position: relative;
   display: inline-block;
+  overflow: hidden;
+  height: 1.4em;
+  line-height: 1.4;
 }
 
-[data-nav-link]::after {
-  content: '';
+[data-nav-link] span {
+  display: block;
+  position: relative;
+  color: #3a3a42;
+  transition: transform 1.2s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+[data-nav-link]:hover span {
+  transform: translateY(-100%);
+}
+
+[data-nav-link] span::after {
+  content: attr(data-text);
   position: absolute;
-  bottom: -2px;
+  top: 100%;
   left: 0;
-  width: 0;
-  height: 1px;
-  background-color: var(--color-accent);
-  transition: width 0.3s ease;
-}
-
-[data-nav-link]:hover {
-  color: var(--color-text-primary);
-}
-
-[data-nav-link]:hover::after {
-  width: 100%;
+  color: #3a3a42;
 }
 
 [data-nav-right] {
@@ -93,7 +84,7 @@
   font-family: var(--font-mono);
   font-size: 0.6875rem;
   letter-spacing: 0.1em;
-  color: var(--color-accent);
+  color: oklch(40% 0.01 265);
   font-variant-numeric: tabular-nums;
   transition: opacity 0.2s;
 }
@@ -125,11 +116,19 @@
   gap: var(--space-2);
 }
 
+[data-nav-status-label] {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: oklch(30% 0.01 265);
+}
+
 [data-status-dot] {
   width: 6px;
   height: 6px;
   border-radius: var(--radius-full);
-  background-color: var(--color-accent);
+  background-color: oklch(40% 0.01 265);
   flex-shrink: 0;
   animation: statusPulse 2.5s ease-in-out infinite;
 }
@@ -152,12 +151,12 @@
   width: 44px;
   height: 36px;
   display: block;
-  color: var(--color-text-primary);
+  color: oklch(15% 0.01 265);
   transition: color 0.3s ease;
 }
 
 [data-nav-logo]:hover svg {
-  color: var(--color-accent);
+  color: oklch(40% 0.01 265);
 }
 
 [data-nav-logo] svg path {
@@ -178,8 +177,15 @@
   left: 0;
   width: 0;
   height: 1px;
-  background-color: var(--color-accent);
+  background-color: oklch(25% 0.01 265);
   pointer-events: none;
+}
+
+/* ── Nav link color states ── */
+[data-nav-link],
+[data-nav-link] span,
+[data-nav-link] span::after {
+  color: #3a3a42 !important;
 }
 
 /* ── Light-section nav theme ── */
@@ -188,15 +194,19 @@
 }
 
 [data-nav].is-light [data-nav-logo]:hover svg {
-  color: var(--color-accent-dim);
+  color: oklch(40% 0.01 265);
 }
 
-[data-nav].is-light [data-nav-link] {
-  color: var(--color-on-light-secondary);
+[data-nav].is-light [data-nav-link],
+[data-nav].is-light [data-nav-link] span,
+[data-nav].is-light [data-nav-link] span::after {
+  color: #555560 !important;
 }
 
-[data-nav].is-light [data-nav-link]:hover {
-  color: var(--color-on-light-primary);
+[data-nav].is-light [data-nav-link]:hover,
+[data-nav].is-light [data-nav-link]:hover span,
+[data-nav].is-light [data-nav-link]:hover span::after {
+  color: #1e1e24 !important;
 }
 
 [data-nav].is-light.is-scrolled::before {

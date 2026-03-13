@@ -24,7 +24,7 @@
   --color-border-subtle: oklch(16% 0.014 265);
   --color-border-accent: oklch(72% 0.22 145 / 0.3);
 
-  --font-display: 'Inter', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Courier New', monospace;
 

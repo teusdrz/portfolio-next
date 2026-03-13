@@ -226,21 +226,24 @@ export function initNav() {
   }
 
   /* ── Light-section theme toggle ── */
-  const lightSections = document.querySelectorAll<HTMLElement>('[data-panel-reveal], [data-services], [data-process], [data-work-intro]')
+  const lightSections = document.querySelectorAll<HTMLElement>('[data-hero], [data-panel-reveal], [data-services], [data-process], [data-work-intro]')
   const lightTriggers: ScrollTrigger[] = []
   let lightCount = 0
   let lightOffDelay: ReturnType<typeof gsap.delayedCall> | null = null
 
+  const clearLinkColors = () => {
+    links.forEach(link => {
+      gsap.set(link, { clearProps: 'color' })
+      const span = link.querySelector('span')
+      if (span) gsap.set(span, { clearProps: 'color' })
+    })
+  }
+
   const applyLight = () => {
     nav.classList.add('is-light')
+    clearLinkColors()
     gsap.to('[data-nav-logo] svg', {
       color: 'var(--color-on-light-primary)',
-      duration: 0.4,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    })
-    gsap.to('[data-nav-link]', {
-      color: 'var(--color-on-light-secondary)',
       duration: 0.4,
       ease: 'power2.out',
       overwrite: 'auto',
@@ -249,14 +252,9 @@ export function initNav() {
 
   const applyDark = () => {
     nav.classList.remove('is-light')
+    clearLinkColors()
     gsap.to('[data-nav-logo] svg', {
       color: 'var(--color-text-primary)',
-      duration: 0.4,
-      ease: 'power2.out',
-      overwrite: 'auto',
-    })
-    gsap.to('[data-nav-link]', {
-      color: 'var(--color-text-secondary)',
       duration: 0.4,
       ease: 'power2.out',
       overwrite: 'auto',
@@ -276,6 +274,15 @@ export function initNav() {
         if (lightCount === 0) applyDark()
         lightOffDelay = null
       })
+    }
+  }
+
+  // Apply is-light immediately if hero is visible on load
+  const heroEl = document.querySelector<HTMLElement>('[data-hero]')
+  if (heroEl) {
+    const heroRect = heroEl.getBoundingClientRect()
+    if (heroRect.top < window.innerHeight && heroRect.bottom > 0) {
+      nav.classList.add('is-light')
     }
   }
 
@@ -308,10 +315,10 @@ export function initNav() {
       trigger: el,
       start: 'top center',
       end: 'bottom center',
-      onEnter: () => gsap.to(link, { color: 'var(--color-text-primary)', duration: 0.3 }),
-      onLeave: () => gsap.to(link, { color: 'var(--color-text-secondary)', duration: 0.3 }),
-      onEnterBack: () => gsap.to(link, { color: 'var(--color-text-primary)', duration: 0.3 }),
-      onLeaveBack: () => gsap.to(link, { color: 'var(--color-text-secondary)', duration: 0.3 })
+      onEnter: () => link.classList.add('is-active'),
+      onLeave: () => link.classList.remove('is-active'),
+      onEnterBack: () => link.classList.add('is-active'),
+      onLeaveBack: () => link.classList.remove('is-active'),
     })
   })
 
@@ -349,12 +356,12 @@ export function initNav() {
       } else {
         nav.classList.remove('is-scrolled')
       }
-      if (y > lastY + 30 && y > 200 && navVisible) {
+      if (y > lastY + 12 && y > 100 && navVisible) {
         navVisible = false
-        gsap.to(nav, { y: -88, duration: 0.45, ease: CONFIG.ease.sharp, overwrite: 'auto' })
-      } else if (y < lastY - 20 && !navVisible) {
+        gsap.to(nav, { y: -100, duration: 0.35, ease: CONFIG.ease.sharp, overwrite: 'auto' })
+      } else if (y < lastY - 8 && !navVisible) {
         navVisible = true
-        gsap.to(nav, { y: 0, duration: 0.45, ease: CONFIG.ease.primary, overwrite: 'auto' })
+        gsap.to(nav, { y: 0, duration: 0.4, ease: CONFIG.ease.primary, overwrite: 'auto' })
       }
       lastY = y
     }

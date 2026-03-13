@@ -2,7 +2,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    padding: 40vh var(--space-8) 0;
+    padding: 20vh var(--space-8) 0;
     background-color: var(--color-bg);
     overflow: hidden;
     min-height: 100vh;
@@ -16,14 +16,16 @@
 }
 
 [data-footer-cta] a {
-    font-family: var(--font-mono);
-    font-size: clamp(1rem, 1.6vw, 1.5rem);
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 4.5rem);
+    font-weight: 700;
     color: var(--color-white);
     text-decoration: none;
-    letter-spacing: 0.1em;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--color-white);
-    padding-bottom: 6px;
+    line-height: 1;
+    border-bottom: 1px solid oklch(100% 0 0 / 0.25);
+    padding-bottom: 8px;
     transition: opacity 0.3s;
 }
 
@@ -137,7 +139,7 @@
 /* ── Large name ── */
 [data-footer-name] {
     font-family: var(--font-display);
-    font-size: clamp(3rem, 11.0vw, 20rem);
+    font-size: clamp(3rem, 12.5vw, 26rem);
     font-weight: 900;
     line-height: 0.85;
     letter-spacing: -0.04em;

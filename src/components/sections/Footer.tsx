@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer data-footer>
+        <footer id="footer" data-footer>
             {/* CTA */}
             <div data-footer-cta>
                 <a href="mailto:matheusviniciusdrs5555@gmail.com">

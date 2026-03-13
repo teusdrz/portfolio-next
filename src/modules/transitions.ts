@@ -3,24 +3,66 @@ import { gsap, ScrollTrigger } from '@/lib/gsap-setup'
 const triggers: ScrollTrigger[] = []
 const timelines: gsap.core.Timeline[] = []
 
-function depthExit(section: HTMLElement) {
+function heroAboutConnection(hero: HTMLElement, about: HTMLElement) {
+  const aboutWatermark = about.querySelector<HTMLElement>('[data-about-watermark]')
+
+  if (!aboutWatermark) return
+
+  const watermarkBridgeST = ScrollTrigger.create({
+    trigger: about,
+    start: 'top 90%',
+    end: 'top 30%',
+    scrub: 1.2,
+    invalidateOnRefresh: true,
+    onUpdate: (self) => {
+      const p = self.progress
+      if (aboutWatermark) {
+        gsap.set(aboutWatermark, {
+          opacity: gsap.utils.clamp(0, 0.032, p * 0.032),
+        })
+      }
+    },
+  })
+
+  triggers.push(watermarkBridgeST)
+}
+
+function cameraDepthTransition(exitSection: HTMLElement, enterSection: HTMLElement) {
+  gsap.set(enterSection, {
+    clipPath: 'inset(100% 0% 0% 0%)',
+    y: 60,
+  })
+
   const tl = gsap.timeline({
     scrollTrigger: {
-      trigger: section,
-      start: 'bottom bottom',
-      end: '+=50%',
-      scrub: 1.2,
+      trigger: exitSection,
+      start: 'bottom 80%',
+      end: 'bottom 15%',
+      scrub: 1.4,
       invalidateOnRefresh: true,
     },
   })
 
-  tl.to(section, {
-    scale: 0.92,
-    opacity: 0,
-    filter: 'blur(6px)',
-    transformOrigin: 'center center',
-    ease: 'none',
-  })
+  tl.to(
+    exitSection,
+    {
+      scale: 0.88,
+      opacity: 0.2,
+      transformOrigin: 'center top',
+      ease: 'none',
+    },
+    0,
+  )
+
+  tl.to(
+    enterSection,
+    {
+      clipPath: 'inset(0% 0% 0% 0%)',
+      y: 0,
+      ease: 'none',
+    },
+    0,
+  )
 
   timelines.push(tl)
   if (tl.scrollTrigger) triggers.push(tl.scrollTrigger)
@@ -121,13 +163,14 @@ function scaleReveal(section: HTMLElement) {
 export function initTransitions() {
   const hero = document.querySelector<HTMLElement>('[data-hero]')
   const about = document.querySelector<HTMLElement>('[data-about]')
+  const panelReveal = document.querySelector<HTMLElement>('[data-panel-reveal]')
   const process = document.querySelector<HTMLElement>('[data-process]')
   const work = document.querySelector<HTMLElement>('[data-work]')
   const contact = document.querySelector<HTMLElement>('[data-contact]')
 
-  if (hero) depthExit(hero)
-
-  if (about) parallaxLift(about)
+  if (hero && about) {
+    heroAboutConnection(hero, about)
+  }
 
   if (process) horizontalWipe(process)
 

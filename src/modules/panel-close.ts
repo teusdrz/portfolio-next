@@ -16,21 +16,24 @@ export function initPanelClose() {
         }
     })
 
+    /* fase 1 – colunas voltam à largura normal */
+    tl.to(cols, {
+        scaleX: 1,
+        duration: 0.3,
+        ease: 'power2.out',
+    }, 0)
+
+    /* fase 2 – colunas fecham de fora para dentro (inverso do reveal) */
     const mid = Math.floor(cols.length / 2)
+    const maxDist = mid
     cols.forEach((col, i) => {
         const dist = Math.abs(i - mid)
         tl.to(col, {
-            scaleY: 1,
+            scaleY: 0,
             duration: 0.4,
             ease: 'power3.inOut',
-        }, dist * 0.06)
+        }, 0.25 + (maxDist - dist) * 0.06)
     })
-
-    tl.to(cols, {
-        scaleX: 1.3,
-        duration: 0.3,
-        ease: 'power2.in',
-    }, 0.35)
 
     return {
         destroy: () => {
