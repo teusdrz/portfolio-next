@@ -84,7 +84,7 @@ export default function About() {
 
       {/* ── CTA ── */}
       <div data-about-cta>
-        <a data-about-cta-link href="#footer">
+        <a data-about-cta-link href="#contact">
           <span>LETS CONTACT</span>
           <svg data-about-cta-arrow aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M2 10L10 2M10 2H5M10 2V7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
