@@ -267,4 +267,12 @@
   [data-about-cta] {
     padding: var(--space-8) 0 var(--space-16);
   }
+
+  [data-about-philosophy]>[data-about-body]:last-child {
+    transform: none;
+    align-self: center;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

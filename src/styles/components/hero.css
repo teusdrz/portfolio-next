@@ -156,9 +156,12 @@
   }
 
   [data-hero-manifesto] {
-    font-size: clamp(2.5rem, 14vw, 5rem);
+    font-size: clamp(1.75rem, 9.5vw, 3.5rem);
+    left: var(--space-5);
     right: var(--space-5);
-    bottom: calc(var(--space-5) + 3rem);
+    text-align: right;
+    bottom: auto;
+    top: 55%;
   }
 
   [data-hero-identity] {
